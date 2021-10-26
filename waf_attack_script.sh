@@ -137,3 +137,30 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+
+# CVE-2014-6271: Bash Remote Command Execution
+	echo "=========="
+	echo "Bash Remote Command Execution"
+	echo "Launching Remote Command Execution against " $line"/cgi-bin"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A '() { :;};echo; /bin/bash -c " echo 2014 | md5sum"' $line"/cgi-bin/test-cgi" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Bash Remote Command Execution completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Bash Remote Command Execution \t \t x \t " >> $file
+        
+    elif curl -v -s -A '() { :;};echo; /bin/bash -c " echo 2014 | md5sum"' $line"/cgi-bin/test-cgi" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Bash Remote Command Execution completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Bash Remote Command Execution \t x \t \t " >> $file
+	else
+		echo "Bash Remote Command Execution completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Bash Remote Command Execution \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
