@@ -110,3 +110,30 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+	
+# NMAP Scanner
+	echo "=========="
+	echo "NMAP Scanner"
+	echo "Launching NMAP Scanner against " $line"/nmap"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)" $line"/nmap/folder/check1516910621" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "NMAP Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t NMAP Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A "Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)" $line"/nmap/folder/check1516910621" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "NMAP Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t NMAP Scanner \t x \t \t " >> $file
+	else
+		echo "NMAP Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t NMAP Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
