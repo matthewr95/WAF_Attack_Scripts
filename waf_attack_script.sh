@@ -217,3 +217,29 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+# OpenVAS Scanner
+	echo "=========="
+	echo "OpenVAS Scanner"
+	echo "Launching OpenVAS Scanner against " $line"/session"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A 'Mozilla/5.0 [en] (X11, U; OpenVAS 8.0.9)' $line"/" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "OpenVAS Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t OpenVAS Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A 'Mozilla/5.0 [en] (X11, U; OpenVAS 8.0.9)' $line"/" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "OpenVAS Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t OpenVAS Scanner \t x \t \t " >> $file
+	else
+		echo "OpenVAS Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t OpenVAS Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
