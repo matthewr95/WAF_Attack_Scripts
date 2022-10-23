@@ -191,3 +191,29 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+# Masscan Scanner
+	echo "=========="
+	echo "Masscan Scanner"
+	echo "Launching Masscan Scanner against " $line"/"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "masscan/1.0 (https://github.com/robertdavidgraham/masscan)" $line"/" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Masscan Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Masscan Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A "masscan/1.0 (https://github.com/robertdavidgraham/masscan)" $line"/" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Masscan Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Masscan Scanner \t x \t \t " >> $file
+	else
+		echo "Masscan Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Masscan Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
