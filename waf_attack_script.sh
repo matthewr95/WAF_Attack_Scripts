@@ -269,3 +269,29 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+# Paros Scanner
+	echo "=========="
+	echo "Paros Scanner"
+	echo "Launching Paros Scanner against " $line"/"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "Mozilla/5.0 (Windows NT 5.1; rv:22.0) Gecko/20100101 Firefox/22.0 Paros/3.2.13" -H "Host: $linehost" -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' $line"/rightnowwp/wp-content/themes/rightnow/includes/uploadify/upload_settings_image.php" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Paros Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Paros Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A "Mozilla/5.0 (Windows NT 5.1; rv:22.0) Gecko/20100101 Firefox/22.0 Paros/3.2.13" -H "Host: $linehost" -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' $line"/rightnowwp/wp-content/themes/rightnow/includes/uploadify/upload_settings_image.php" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Paros Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Paros Scanner \t x \t \t " >> $file
+	else
+		echo "Paros Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Paros Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
