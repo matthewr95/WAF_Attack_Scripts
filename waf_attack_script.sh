@@ -243,3 +243,29 @@ lineip=$(dig +short $linehost)
 	fi
 	echo "=========="
 	echo ""
+# Skipfish Scanner
+	echo "=========="
+	echo "Skipfish Scanner"
+	echo "Launching Skipfish Scanner against " $line"/"
+	
+	# Reset the timestamp to the current time and use PST
+	timestamp=$(TZ=":America/Los_Angeles" date)
+
+	if curl -v -s -A "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; InfoPath.1; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; SF/2.10b)" $line"/sfi9876.xslt" --stderr - | grep "403 Forbidden" &> /dev/null; then
+
+		echo "Skipfish Scanner completed"
+        echo "Attack Status: Blocked by Akamai"
+        echo -e "$timestamp \t $line \t Skipfish Scanner \t \t x \t " >> $file
+        
+    elif curl -v -s -A "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; InfoPath.1; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; SF/2.10b)" $line"/sfi9876.xslt" --stderr - | grep "Your request has been blocked" &> /dev/null; then
+    
+    	echo "Skipfish Scanner completed"
+        echo "Attack Status: Blocked by Imperva"
+        echo -e "$timestamp \t $line \t Skipfish Scanner \t x \t \t " >> $file
+	else
+		echo "Skipfish Scanner completed"
+		echo "Attack Status: Undetected"
+		echo -e "$timestamp \t $line \t Skipfish Scanner \t \t \t x" >> $file
+	fi
+	echo "=========="
+	echo ""
